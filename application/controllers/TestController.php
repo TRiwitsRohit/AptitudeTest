@@ -18,8 +18,8 @@ class TestController extends CI_Controller {
     public function processForm() {
         // Validate form input
         $this->form_validation->set_rules('name', 'Name', 'required');
-        $this->form_validation->set_rules('mobile', 'Mobile', 'required');
-        $this->form_validation->set_rules('email', 'Email', 'required|valid_email');
+        $this->form_validation->set_rules('mobile', 'Mobile', 'required|regex_match[/^[6-9]\d{9}$/]');
+        $this->form_validation->set_rules('email', 'Email', 'required|valid_email|strtolower');
         $this->form_validation->set_rules('role', 'Role', 'required');
         $this->form_validation->set_rules('qualification', 'Qualification', 'required');
     
@@ -38,19 +38,15 @@ class TestController extends CI_Controller {
             );
             $isUserExistsForRole = $this->TestModel->checkUserExists($userData);
     
-            // Check if the user already applied for 2 roles within 90 days
-            $isUserAllowed = $this->TestModel->checkUserAllowed($email);
+            // Check if the user is allowed to apply
+            $isUserAllowed = $this->TestModel->checkUserAllowed($email, $role);
     
             if ($isUserExistsForRole) {
                 // User already applied for the same role within 90 days
-                //echo "You have already applied for this role within 90 days.";
-                
                 $this->session->set_flashdata('error', 'You have already applied for this role try after 90 days. Please contact admin if page refresh issue.');
                 $this->index();
             } elseif (!$isUserAllowed) {
                 // User already applied for 2 roles within 90 days
-                //echo "You have already applied for 2 roles within 90 days.";
-                
                 $this->session->set_flashdata('error', 'You have already applied for 2 roles try after 90 days.');
                 $this->index();
             } else {
@@ -79,7 +75,6 @@ class TestController extends CI_Controller {
         $userRole = $this->session->userdata('user_role');
         $usersData = $this->session->userdata('userData');
         
-    
         foreach ($this->getQuestions($userRole) as $question) {
             $user_answer = $this->input->post("q" . $question['q_id']);
             if ($user_answer === $question['correct_ans']) {

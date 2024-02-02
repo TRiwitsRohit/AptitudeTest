@@ -417,17 +417,17 @@ public function updateStatus() {
 		$order = 'asc';
 		}
 		$config['base_url'] = base_url('index.php/AdminController/viewResult');
-    $config['total_rows'] = $this->AdminModel->count_AllUserData();
-    $config['per_page'] = 10; // Number of records per page
-    $config['uri_segment'] = 3; // The segment number containing the offset
+    	$config['total_rows'] = $this->AdminModel->count_AllUserData();
+    	$config['per_page'] = 10; // Number of records per page
+    	$config['uri_segment'] = 3; // The segment number containing the offset
 
-    $this->pagination->initialize($config);
+    	$this->pagination->initialize($config);
 
-    // Get the current offset from the URL segment
-    $offset = $this->uri->segment(3) ? $this->uri->segment(3) : 0;
+    	// Get the current offset from the URL segment
+    	$offset = $this->uri->segment(3) ? $this->uri->segment(3) : 0;
 
-    // Load data from the model using the pagination parameters
-    $data['result'] = $this->AdminModel->get_AllUserData($config['per_page'], $offset);
+    	// Load data from the model using the pagination parameters
+    	$data['result'] = $this->AdminModel->get_AllUserData($config['per_page'], $offset);
 		$data['active_tab'] = 'view_result';
 		// Call the function from the model to get sorted records with the selected order
 		$data['result'] = $this->AdminModel->fetch($order);
